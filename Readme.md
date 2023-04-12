@@ -49,10 +49,11 @@ ADT Field     | JavaScript
 `ShortInteger`| `Number`
 `Date`        | `Date`
 `Timestamp`   | `Date`
+`Time`        | `String` (`hh:mm:ss.ss`)
 
 ### Not implemented
 
-`Memo`, `Numeric`, `Image`, `Binary`, `Time`, `Raw`, `Money`, `ModTime`, `RowVersion`
+`Memo`, `Numeric`, `Image`, `Binary`, `Raw`, `Money`, `ModTime`, `RowVersion`
 
 ## Limitations and known bugs
 
