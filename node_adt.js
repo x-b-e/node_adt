@@ -7,6 +7,29 @@ var iconv = require('iconv-lite');
 var MS_PER_DAY = 1000 * 60 * 60 * 24;
 var JULIAN_1970 = 2440588;
 
+function unpackedTimeFromADS(byteArray) {
+  if (byteArray.length !== 4) {
+      throw new Error("The input array must have exactly 4 elements.");
+  }
+
+  let milliseconds = 0;
+  for (let i = 0; i < 4; i++) {
+      milliseconds |= byteArray[i] << (i * 8);
+  }
+
+  return millisecondsToTimeString(milliseconds);
+}
+
+function millisecondsToTimeString(milliseconds) {
+  const hours = Math.floor(milliseconds / 3600000);
+  const remainder = milliseconds % 3600000;
+  const minutes = Math.floor(remainder / 60000);
+  const seconds = Math.floor((remainder % 60000) / 1000);
+  const ms = remainder % 1000;
+
+  return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}.${ms.toString().padStart(3, '0')}`;
+}
+
 var Adt = function() {
 
   this.HEADER_LENGTH  = 400;
@@ -289,7 +312,12 @@ var Adt = function() {
 
       // not implemented
       case this.TIME:
-        value = buffer;
+        const array = new Uint8Array(buffer.buffer, buffer.byteOffset, 4);
+        if (array.length === 4) {
+          value = unpackedTimeFromADS(array);
+        } else {
+          value = null;
+        }
         break;
 
       default:
